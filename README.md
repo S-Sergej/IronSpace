@@ -1,4 +1,4 @@
-# IronSpace<br/>
+# <p align="center">IronSpace</p><br/>
 ![Alt text](/img/for_md.jpg "Some img")<br/>
 => Awesome Space battle ship is going to raid the galaxy seeking for the high score.<br/>
 
