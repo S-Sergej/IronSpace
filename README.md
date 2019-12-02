@@ -4,4 +4,3 @@
 -To avoid collateral collision damage you will need to destroy Planets<br/>
 
 -Take care of your limited ammo. You will gain extra missiles reaching certain scores<br/>
-
