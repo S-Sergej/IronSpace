@@ -1,6 +1,9 @@
 body {
-    padding: 0;
     text-align: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color:rgb(222,223,207);
   }
   
   .game {
@@ -16,14 +19,17 @@ body {
   }
   
   .logo-img {
-    width: 350px;
+    width: 500px;
   }
   
   .control-set-img {
     width: 250px;
   }
   
-  body button {
+  #start-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     font-size: 30px;
     background-color: #312c2c;
     color: #fff;
