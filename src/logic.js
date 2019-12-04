@@ -43,7 +43,7 @@ class Player extends MovingObject {
   constructor (startX, startY, width, height, ctx) {
     super(startX, startY, width, height, ctx)
     this.img = new Image()
-    this.img.src = './img/spaceship.png'
+    this.img.src = './img/spaceship_90_102.png'
     this.draw = this.draw.bind(this)
   }
   draw () {
@@ -55,9 +55,22 @@ class Player extends MovingObject {
   }
 }
 
-class Asteroids extends MovingObject {
-  constructor (startX, startY, width, height, ctx) {
+class Asteroid extends MovingObject {
+  constructor (startX, startY, width, height, imgSrc, ctx) {
     super(startX, startY, width, height, ctx)
+    this.speedX = Math.random() * 10
+    this.img = new Image()
+    this.img.src = imgSrc
+    this.draw = this.draw.bind(this)
+    this.fly = this.fly.bind(this)
+  }
+  fly () {
+    this.positionX -= this.speedX
+    this.draw()
+  }
+
+  draw () {
+    this.ctx.drawImage(this.img, this.positionX, this.positionY)
   }
 }
 
@@ -74,8 +87,12 @@ class Game {
 
     this.board = new Board(this.canvas.width, this.canvas.height, this.ctx)
     this.player = new Player(80, 80, 80, 80, this.ctx)
+    this.asteroids = []
+    this.frames = 0
+
     this.start = this.start.bind(this)
     this.update = this.update.bind(this)
+    this.spawnAsteroid = this.spawnAsteroid.bind(this)
     this.speedY = 0
     this.speedX = 0
     document.onkeydown = e => {
@@ -96,6 +113,17 @@ class Game {
       }
     }
   }
+  spawnAsteroid () {
+    let randomAsteroidImg = ['./img/asteroid_200.png','./img/asteroid_150.png','./img/asteroid_100.png'];
+    let AsteroidSizes = ['110','83','56'];
+    let randomIndex = Math.floor(Math.random() * randomAsteroidImg.length)
+    this.frames += 1
+    if (this.frames % 100 === 0) {
+      this.randomSpawn = Math.random() * 350 + 1
+      this.asteroid = new Asteroid(1500,this.randomSpawn,AsteroidSizes[randomIndex],AsteroidSizes[randomIndex],randomAsteroidImg[randomIndex],this.ctx)
+      this.asteroids.push(this.asteroid)
+    }
+  }
 
   start () {
     // this.audioIntro.pause();
@@ -106,12 +134,22 @@ class Game {
   update () {
     this.board.scroll()
     this.player.draw()
+    this.spawnAsteroid()
+    this.asteroids.forEach((asteroid, _, asteroidsArray) => {
+      if (asteroid.positionX > -asteroid.width) {
+        asteroid.fly()
+      } else if (asteroid.positionX < -asteroid.width) {
+       console.log(asteroidsArray, asteroidsArray.length)
+        // debugger;
+        asteroidsArray.splice(asteroidsArray.indexOf(asteroid), 1)
+      }
+    })
     window.requestAnimationFrame(this.update)
   }
 }
 
 window.onload = function () {
-  let game = new Game(800, 500)
+  let game = new Game(1000, 500)
   // game.audioIntro.play()
   document.getElementById('start-button').onclick = function () {
     game.start()
