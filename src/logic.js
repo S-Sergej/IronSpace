@@ -47,11 +47,7 @@ class Player extends MovingObject {
     this.draw = this.draw.bind(this)
   }
   draw () {
-    this.ctx.drawImage(
-      this.img,
-      (this.positionX += this.speedX),
-      (this.positionY += this.speedY)
-    )
+    this.ctx.drawImage(this.img,(this.positionX += this.speedX),(this.positionY += this.speedY))
   }
 }
 
@@ -59,6 +55,7 @@ class Asteroid extends MovingObject {
   constructor (startX, startY, width, height, imgSrc, ctx) {
     super(startX, startY, width, height, ctx)
     this.speedX = Math.random() * 10
+    this.speedY = Math.random() * 5
     this.img = new Image()
     this.img.src = imgSrc
     this.draw = this.draw.bind(this)
@@ -66,7 +63,12 @@ class Asteroid extends MovingObject {
   }
   fly () {
     this.positionX -= this.speedX
+    this.positionY -= this.speedY
     this.draw()
+  }
+
+  bounce(){
+    this.speedY = -this.speedY
   }
 
   draw () {
@@ -76,6 +78,7 @@ class Asteroid extends MovingObject {
 
 class Game {
   constructor (width, height) {
+    //debugger
     this.music = new Audio('./sounds/game.mp3')
     this.audioIntro = new Audio('./sounds/intro.mp3')
 
@@ -86,13 +89,14 @@ class Game {
     document.getElementById('game-board').appendChild(this.canvas)
 
     this.board = new Board(this.canvas.width, this.canvas.height, this.ctx)
-    this.player = new Player(80, 80, 80, 80, this.ctx)
+    this.player = new Player(80, 80, 90, 102, this.ctx)
     this.asteroids = []
     this.frames = 0
 
     this.start = this.start.bind(this)
     this.update = this.update.bind(this)
     this.spawnAsteroid = this.spawnAsteroid.bind(this)
+    this.checkCollision = this.checkCollision.bind(this)
     this.speedY = 0
     this.speedX = 0
     document.onkeydown = e => {
@@ -119,10 +123,30 @@ class Game {
     let randomIndex = Math.floor(Math.random() * randomAsteroidImg.length)
     this.frames += 1
     if (this.frames % 100 === 0) {
-      this.randomSpawn = Math.random() * 350 + 1
-      this.asteroid = new Asteroid(1500,this.randomSpawn,AsteroidSizes[randomIndex],AsteroidSizes[randomIndex],randomAsteroidImg[randomIndex],this.ctx)
+      this.randomSpawn = Math.random() * 320
+      this.asteroid = new Asteroid(this.canvas.width,this.randomSpawn,AsteroidSizes[randomIndex],AsteroidSizes[randomIndex],randomAsteroidImg[randomIndex],this.ctx)
       this.asteroids.push(this.asteroid)
     }
+  }
+
+  checkCollision(){
+    let animationPuffer = 40;
+    if (this.player.positionX < 0){this.player.speedX +=0.5};
+    if (this.player.positionX+this.player.width > 1000){this.player.speedX -=0.5};
+    if (this.player.positionY < 0){this.player.speedY +=0.5};
+    if (this.player.positionY+this.player.height > 480){this.player.speedY -=0.5};
+
+    this.asteroids.forEach(asteroid => {
+      if (asteroid.positionY + asteroid.height*1.4 > 480 || asteroid.positionY + asteroid.height/2.5 < 0) asteroid.bounce();
+    })
+
+    this.asteroids.forEach((asteroid, _, asteroidsArray) => {
+      if (asteroid.positionX+animationPuffer > -asteroid.width) {
+        asteroid.fly()
+      } else if (asteroid.positionX+animationPuffer < -asteroid.width) {
+        asteroidsArray.splice(asteroidsArray.indexOf(asteroid), 1)
+      }
+    })
   }
 
   start () {
@@ -131,25 +155,18 @@ class Game {
     this.update()
   }
 
+
   update () {
     this.board.scroll()
     this.player.draw()
+    this.checkCollision()
     this.spawnAsteroid()
-    this.asteroids.forEach((asteroid, _, asteroidsArray) => {
-      if (asteroid.positionX > -asteroid.width) {
-        asteroid.fly()
-      } else if (asteroid.positionX < -asteroid.width) {
-       console.log(asteroidsArray, asteroidsArray.length)
-        // debugger;
-        asteroidsArray.splice(asteroidsArray.indexOf(asteroid), 1)
-      }
-    })
     window.requestAnimationFrame(this.update)
   }
 }
 
 window.onload = function () {
-  let game = new Game(1000, 500)
+  let game = new Game(1000, 480)
   // game.audioIntro.play()
   document.getElementById('start-button').onclick = function () {
     game.start()
