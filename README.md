@@ -3,4 +3,4 @@
 
 -To avoid collateral collision damage you will need to keep spaceship under control at anytime<br/>
 
--Take care of your limited armor. You will get bonus armor for each successed fully passed asteroid<br/>
+-Take care of your limited lives, your ship can only endure 5 hits.<br/>
