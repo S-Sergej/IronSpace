@@ -68,8 +68,12 @@ class Player extends MovingObject {
   fly() {
     if (this.invincible) {
       this.invincible -= 1
+      if (this.invincible%2 == 0){
+        this.draw()
+      }
+    }else{
+    this.draw();
     }
-    this.draw()
   }
 }
 
@@ -103,12 +107,14 @@ class Game {
   constructor (width, height) {
     this.music = new Audio('./sounds/game.mp3')
     this.audioIntro = new Audio('./sounds/intro.mp3')
-    this.audioExplosion = new Audio('../sounds/explosion.wav')
-    this.audioPassedAsteroids = new Audio('../sounds/passed_counter.wav')
-    this.explodeAnimation = new Image()
-    this.explodeAnimation.src = '../img/explosive.png';
+    this.audioExplosion = new Audio('./sounds/explosion.wav')
+    this.audioPassedAsteroids = new Audio('./sounds/passed_counter.wav')
+    this.gameOver = new Image()
+    this.gameOver.src = './img/gameOver.png';
+    this.winGame = new Image();
+    this.winGame.src = './img/win.png'
     this.frames = 0;
-    this.lives = 10;
+    this.lives = 2;
     this.score = 0;
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
@@ -129,6 +135,7 @@ class Game {
     this.checkCollision = this.checkCollision.bind(this)
     this.areCollided = this.areCollided.bind(this)
     this.stopGame = this.stopGame.bind(this)
+    this.gameWin = this.gameWin.bind(this)
     this.speedY = 0
     this.speedX = 0
     this.explosions = [];
@@ -168,12 +175,13 @@ class Game {
   }
 
   checkCollision(){
-    let animationPuffer = 40;
-    this.explosionSound = new Audio('../sounds/collision.wav')
+    let animationPuffer = 20;
+    let animationPufferBottom = 10;
+    this.explosionSound = new Audio('./sounds/collision.wav')
     if (this.player.positionX < 0) { this.player.speedX = -this.player.speedX};
-    if (this.player.positionX + this.player.width > 1000) { this.player.speedX = -this.player.speedX };
+    if (this.player.positionX + this.player.width + animationPuffer > 1000) { this.player.speedX = -this.player.speedX };
     if (this.player.positionY < 0) { this.player.speedY = -this.player.speedY  };
-    if (this.player.positionY + this.player.height > 480) { this.player.speedY = -this.player.speedY}
+    if (this.player.positionY + this.player.height + animationPufferBottom > 480) { this.player.speedY = -this.player.speedY}
     
     this.asteroids.forEach(asteroid => {
       if (asteroid.positionY + asteroid.height > 480 || asteroid.positionY < 0) asteroid.bounce();
@@ -195,7 +203,6 @@ class Game {
   if (asteroid.left() < player.right() && player.left() < asteroid.right()){
       if (asteroid.top() < player.bottom() &&player.top() < asteroid.bottom()){
         this.lives -= 1
-        asteroid.bounce();
         this.explosionSound.play();
         this.player.invincible = 50;
         //this.ctx.drawImage(this.explodeAnimation, 128*Math.floor(this.positionX),128*Math.floor(this.positionY),128,128, this.positionX, this.positionY, 100, 100);
@@ -206,18 +213,35 @@ class Game {
 }
 
   checkGameOver(){
-    let spaceshipDestroyed = this.movingObjects.some(asteroid => {return this.areCollided(this.player, asteroid)})
-    if (spaceshipDestroyed){
-      //document.getElementById('game-over').appendChild(this.canvas)
+    this.movingObjects.forEach(asteroid => {this.areCollided(this.player, asteroid)})
+    if (this.lives === 0){
       this.stopGame();
     }
   }
 
+  gameWin(){
+    document.getElementById("start-easy").removeAttribute("disabled")
+    clearInterval(this.interval);
+    clearInterval(this.timeOut);
+    this.ctx.drawImage(this.winGame,250,156)
+    this.music.pause();
+    setTimeout(function(){
+      this.audioGameOver = new Audio('./sounds/GameOver.mp3')
+      this.audioGameOver.play()
+    }, 1500);
+  }
+
   stopGame(){
-    document.getElementById("start-button").removeAttribute("disabled")
-    if (this.lives === 0){
-      console.log("should stop game here")
-      }
+    document.getElementById("start-easy").removeAttribute("disabled")
+      clearInterval(this.interval);
+      clearInterval(this.timeOut);
+      this.ctx.drawImage(this.gameOver,250,156)
+      this.music.pause();
+      this.audioExplosion.play();
+      setTimeout(function(){
+        this.audioGameOver = new Audio('./sounds/GameOver.mp3')
+        this.audioGameOver.play()
+      }, 1500);
     }
 
 
@@ -226,6 +250,9 @@ class Game {
     document.getElementById("start-easy","start-medium","start-hardcore").setAttribute("disabled", "disabled");
     this.music.play()
     this.interval = setInterval(this.update, 20)
+    this.timeOut = setInterval(this.gameWin,5000)
+
+    console.log(this.frames/2.5);
   }
 
 
@@ -237,19 +264,7 @@ class Game {
     this.checkGameOver()
     document.getElementById("shield").innerHTML = this.lives;
     document.getElementById("score").innerHTML = this.score;
-    document.getElementById("invincible").innerHTML = this.invincible;
-    /*if (shield > 1){
-    window.requestAnimationFrame(this.update)
-    }
-    else{
-      this.music.pause();
-      this.audioExplosion.play();
-      setTimeout(function(){
-        this.audioGameOver = new Audio('../sounds/GameOver.mp3')
-        this.audioGameOver.play()
-      }, 1500);
-    }
-    }*/
+    document.getElementById("timer").innerHTML = Math.ceil((5000/20-this.frames)/60);
 }
 }
 
