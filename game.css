@@ -1,9 +1,11 @@
 body {
+    color: white;  
+    font-family: 'Orbitron', sans-serif;
     text-align: center;
     display: flex;
     align-items: center;
     flex-direction: column;
-    background-color:rgb(222,223,207);
+    background-color:black;
   }
   
   .game {
@@ -21,12 +23,16 @@ body {
   .logo-img {
     width: 500px;
   }
+
+  .control_set {
+    color: white;
+  }
   
   .control-set-img {
     width: 250px;
   }
   
-  #start-button {
+  #start-easy {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -39,10 +45,36 @@ body {
     border-radius: 5px;
     margin-bottom: 20px;
   }
+  #start-medium {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    background-color: #0A1B2A;
+    color: #fff;
+    padding: 20px 40px;
+    border: 0;
+    box-shadow: 0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
+  #start-hardcore {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    background-color: #8A2908;
+    color: #fff;
+    padding: 20px 40px;
+    border: 0;
+    box-shadow: 0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+  }
   
   #game-board {
       float: left;
-      padding: 20px 0px;
+      padding: 10px 0px;
   }
   
 .canvas {
