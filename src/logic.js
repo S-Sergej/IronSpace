@@ -114,7 +114,7 @@ class Game {
     this.winGame = new Image();
     this.winGame.src = './img/win.png'
     this.frames = 0;
-    this.lives = 2;
+    this.lives = 5;
     this.score = 0;
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
@@ -223,7 +223,7 @@ class Game {
     document.getElementById("start-easy").removeAttribute("disabled")
     clearInterval(this.interval);
     clearInterval(this.timeOut);
-    this.ctx.drawImage(this.winGame,250,156)
+    this.ctx.drawImage(this.winGame,390,158)
     this.music.pause();
     setTimeout(function(){
       this.audioGameOver = new Audio('./sounds/GameOver.mp3')
@@ -250,9 +250,7 @@ class Game {
     document.getElementById("start-easy","start-medium","start-hardcore").setAttribute("disabled", "disabled");
     this.music.play()
     this.interval = setInterval(this.update, 20)
-    this.timeOut = setInterval(this.gameWin,5000)
-
-    console.log(this.frames/2.5);
+    this.timeOut = setInterval(this.gameWin,72000)
   }
 
 
@@ -264,7 +262,7 @@ class Game {
     this.checkGameOver()
     document.getElementById("shield").innerHTML = this.lives;
     document.getElementById("score").innerHTML = this.score;
-    document.getElementById("timer").innerHTML = Math.ceil((5000/20-this.frames)/60);
+    document.getElementById("timer").innerHTML = Math.ceil((72000/20-this.frames)/60);
 }
 }
 
