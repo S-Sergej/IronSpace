@@ -68,8 +68,12 @@ class Player extends MovingObject {
   fly() {
     if (this.invincible) {
       this.invincible -= 1
+      if (this.invincible%2 == 0){
+        this.draw()
+      }
+    }else{
+    this.draw();
     }
-    this.draw()
   }
 }
 
@@ -168,12 +172,13 @@ class Game {
   }
 
   checkCollision(){
-    let animationPuffer = 40;
+    let animationPuffer = 20;
+    let animationPufferBottom = 10;
     this.explosionSound = new Audio('../sounds/collision.wav')
     if (this.player.positionX < 0) { this.player.speedX = -this.player.speedX};
-    if (this.player.positionX + this.player.width > 1000) { this.player.speedX = -this.player.speedX };
+    if (this.player.positionX + this.player.width + animationPuffer > 1000) { this.player.speedX = -this.player.speedX };
     if (this.player.positionY < 0) { this.player.speedY = -this.player.speedY  };
-    if (this.player.positionY + this.player.height > 480) { this.player.speedY = -this.player.speedY}
+    if (this.player.positionY + this.player.height + animationPufferBottom > 480) { this.player.speedY = -this.player.speedY}
     
     this.asteroids.forEach(asteroid => {
       if (asteroid.positionY + asteroid.height > 480 || asteroid.positionY < 0) asteroid.bounce();
@@ -237,7 +242,6 @@ class Game {
     this.checkGameOver()
     document.getElementById("shield").innerHTML = this.lives;
     document.getElementById("score").innerHTML = this.score;
-    document.getElementById("invincible").innerHTML = this.invincible;
     /*if (shield > 1){
     window.requestAnimationFrame(this.update)
     }
