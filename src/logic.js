@@ -133,6 +133,7 @@ class Game {
     this.checkCollision = this.checkCollision.bind(this)
     this.areCollided = this.areCollided.bind(this)
     this.stopGame = this.stopGame.bind(this)
+    this.gameWin = this.gameWin.bind(this)
     this.speedY = 0
     this.speedX = 0
     this.explosions = [];
@@ -216,13 +217,22 @@ class Game {
     }
   }
 
-  checkWinGame(){
-   
+  gameWin(){
+    document.getElementById("start-easy").removeAttribute("disabled")
+    clearInterval(this.interval);
+    clearInterval(this.timeOut);
+    this.ctx.drawImage(this.winGame,250,156)
+    this.music.pause();
+    setTimeout(function(){
+      this.audioGameOver = new Audio('./sounds/GameOver.mp3')
+      this.audioGameOver.play()
+    }, 1500);
   }
 
   stopGame(){
     document.getElementById("start-easy").removeAttribute("disabled")
       clearInterval(this.interval);
+      clearInterval(this.timeOut);
       this.ctx.drawImage(this.gameOver,250,156)
       this.music.pause();
       this.audioExplosion.play();
@@ -238,6 +248,8 @@ class Game {
     document.getElementById("start-easy","start-medium","start-hardcore").setAttribute("disabled", "disabled");
     this.music.play()
     this.interval = setInterval(this.update, 20)
+    this.timeOut = setInterval(this.gameWin,5000)
+    console.log(this.frames/2.5);
   }
 
 
