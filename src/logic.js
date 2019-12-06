@@ -107,12 +107,12 @@ class Game {
   constructor (width, height) {
     this.music = new Audio('./sounds/game.mp3')
     this.audioIntro = new Audio('./sounds/intro.mp3')
-    this.audioExplosion = new Audio('../sounds/explosion.wav')
-    this.audioPassedAsteroids = new Audio('../sounds/passed_counter.wav')
-    this.explodeAnimation = new Image()
-    this.explodeAnimation.src = '../img/explosive.png';
+    this.audioExplosion = new Audio('./sounds/explosion.wav')
+    this.audioPassedAsteroids = new Audio('./sounds/passed_counter.wav')
+    this.gameOver = new Image()
+    this.gameOver.src = './img/gameOver.png';
     this.frames = 0;
-    this.lives = 10;
+    this.lives = 2;
     this.score = 0;
     this.canvas = document.createElement('canvas')
     this.ctx = this.canvas.getContext('2d')
@@ -174,7 +174,7 @@ class Game {
   checkCollision(){
     let animationPuffer = 20;
     let animationPufferBottom = 10;
-    this.explosionSound = new Audio('../sounds/collision.wav')
+    this.explosionSound = new Audio('./sounds/collision.wav')
     if (this.player.positionX < 0) { this.player.speedX = -this.player.speedX};
     if (this.player.positionX + this.player.width + animationPuffer > 1000) { this.player.speedX = -this.player.speedX };
     if (this.player.positionY < 0) { this.player.speedY = -this.player.speedY  };
@@ -200,7 +200,6 @@ class Game {
   if (asteroid.left() < player.right() && player.left() < asteroid.right()){
       if (asteroid.top() < player.bottom() &&player.top() < asteroid.bottom()){
         this.lives -= 1
-        asteroid.bounce();
         this.explosionSound.play();
         this.player.invincible = 50;
         //this.ctx.drawImage(this.explodeAnimation, 128*Math.floor(this.positionX),128*Math.floor(this.positionY),128,128, this.positionX, this.positionY, 100, 100);
@@ -211,18 +210,26 @@ class Game {
 }
 
   checkGameOver(){
-    let spaceshipDestroyed = this.movingObjects.some(asteroid => {return this.areCollided(this.player, asteroid)})
-    if (spaceshipDestroyed){
-      //document.getElementById('game-over').appendChild(this.canvas)
+    this.movingObjects.forEach(asteroid => {this.areCollided(this.player, asteroid)})
+    if (this.lives === 0){
       this.stopGame();
     }
   }
 
+  checkWinGame(){
+   
+  }
+
   stopGame(){
-    document.getElementById("start-button").removeAttribute("disabled")
-    if (this.lives === 0){
-      console.log("should stop game here")
-      }
+    document.getElementById("start-easy").removeAttribute("disabled")
+      clearInterval(this.interval);
+      this.ctx.drawImage(this.gameOver,250,156)
+      this.music.pause();
+      this.audioExplosion.play();
+      setTimeout(function(){
+        this.audioGameOver = new Audio('./sounds/GameOver.mp3')
+        this.audioGameOver.play()
+      }, 1500);
     }
 
 
@@ -242,18 +249,6 @@ class Game {
     this.checkGameOver()
     document.getElementById("shield").innerHTML = this.lives;
     document.getElementById("score").innerHTML = this.score;
-    /*if (shield > 1){
-    window.requestAnimationFrame(this.update)
-    }
-    else{
-      this.music.pause();
-      this.audioExplosion.play();
-      setTimeout(function(){
-        this.audioGameOver = new Audio('../sounds/GameOver.mp3')
-        this.audioGameOver.play()
-      }, 1500);
-    }
-    }*/
 }
 }
 
