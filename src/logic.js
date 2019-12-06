@@ -251,6 +251,7 @@ class Game {
     this.music.play()
     this.interval = setInterval(this.update, 20)
     this.timeOut = setInterval(this.gameWin,5000)
+
     console.log(this.frames/2.5);
   }
 
@@ -263,6 +264,7 @@ class Game {
     this.checkGameOver()
     document.getElementById("shield").innerHTML = this.lives;
     document.getElementById("score").innerHTML = this.score;
+    document.getElementById("timer").innerHTML = Math.ceil((5000/20-this.frames)/60);
 }
 }
 
