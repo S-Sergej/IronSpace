@@ -111,6 +111,8 @@ class Game {
     this.audioPassedAsteroids = new Audio('./sounds/passed_counter.wav')
     this.gameOver = new Image()
     this.gameOver.src = './img/gameOver.png';
+    this.winGame = new Image();
+    this.winGame.src = './img/win.png'
     this.frames = 0;
     this.lives = 2;
     this.score = 0;
